@@ -22,7 +22,7 @@ import yaml
 from PIL import ExifTags, Image, ImageOps
 from torch.utils.data import DataLoader, Dataset, dataloader, distributed
 from tqdm import tqdm
-from picamera2 import Picamera2
+#from picamera2 import Picamera2
 
 from utils.augmentations import (Albumentations, augment_hsv, classify_albumentations, classify_transforms, copy_paste,
                                  letterbox, mixup, random_perspective)
@@ -369,21 +369,21 @@ class LoadStreams:
                 fps = cap.get(cv2.CAP_PROP_FPS)  # warning: may return 0 or nan
                 self.frames[i] = max(int(cap.get(cv2.CAP_PROP_FRAME_COUNT)), 0) or float('inf')  # infinite stream fallback
                 self.fps[i] = max((fps if math.isfinite(fps) else 0) % 100, 0) or 30  # 30 FPS fallback
-            elif s==1:
-                cap = Picamera2()
-                configuration = cap.create_preview_configuration(main={"format": "BGR888", "size": (640, 480)})
-                cap.configure(configuration)
-                cap.start()
-                w, h = configuration["main"]["size"]
-                fps = configuration["main"].get("framerate",30) if configuration["main"].get("framerate",30) else 30
-                self.frames[i] = float('inf')
-                self.fps[i] = fps if math.isfinite(fps) else 30
+            # elif s==1:
+            #     cap = Picamera2()
+            #     configuration = cap.create_preview_configuration(main={"format": "BGR888", "size": (640, 480)})
+            #     cap.configure(configuration)
+            #     cap.start()
+            #     w, h = configuration["main"]["size"]
+            #     fps = configuration["main"].get("framerate",30) if configuration["main"].get("framerate",30) else 30
+            #     self.frames[i] = float('inf')
+            #     self.fps[i] = fps if math.isfinite(fps) else 30
             if s==0 or is_rtsp:
                 _, self.imgs[i] = cap.read()  # guarantee first frame
                 self.threads[i] = Thread(target=self.update, args=([i, cap, s]), daemon=True)
-            elif s==1:
-                self.imgs[i] = cap.capture_array()
-                self.threads[i] = Thread(target=self.update_picam, args=([i, cap, s]), daemon=True)
+            # elif s==1:
+            #     self.imgs[i] = cap.capture_array()
+            #     self.threads[i] = Thread(target=self.update_picam, args=([i, cap, s]), daemon=True)
 
             LOGGER.info(f"{st} Success ({self.frames[i]} frames {w}x{h} at {self.fps[i]:.2f} FPS)")
             self.threads[i].start()
