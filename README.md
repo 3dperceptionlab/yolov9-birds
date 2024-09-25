@@ -10,7 +10,7 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
- it must be executed the next command:
+Then deploy the model with the following command:
 ```bash
 bash detect.sh
 ```
